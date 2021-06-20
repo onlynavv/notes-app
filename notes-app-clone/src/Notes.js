@@ -1,12 +1,12 @@
 import React from 'react'
 
-const Notes = ({id,text,date}) => {
+const Notes = ({id,text,date,deleteFunc}) => {
     return (
         <div>
             <p>{text}</p>
             <footer>
                 <p>{date}</p>
-                <button>delete</button>
+                <button onClick={()=>deleteFunc(id)}>delete</button>
             </footer>
         </div>
     )

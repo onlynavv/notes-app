@@ -1,5 +1,7 @@
-import React,{useState} from 'react'
+import React,{useState,useEffect} from 'react'
 import Notelist from './Notelist'
+import AddNewNote from './AddNewNote'
+import SearchNote from './SearchNote'
 
 function App() {
 
@@ -7,23 +9,55 @@ function App() {
     {
       id:1,
       text:'this is my first note',
-      date: '20/06/2021'
+      date: new Date().toLocaleDateString()
     },
     {
       id:2,
       text:'this is my second note',
-      date: '20/06/2021'
+      date: new Date().toLocaleDateString()
     },
     {
       id:3,
       text:'this is my third note',
-      date: '20/06/2021'
+      date: new Date().toLocaleDateString()
     }
   ])
 
+  const [searchTerm, setSearchTerm] = useState('')
+
+  const newNoteValue = (newNote) => {
+    const newValue = {id:new Date().getTime().toString(),text:newNote,date:new Date().toLocaleDateString()}
+    setNotes([...notes,newValue])
+  }
+
+  const deleteFunc = (id) => {
+    setNotes(()=>{
+      return(
+        notes.filter((note)=>{
+            return note.id !== id
+        })
+      )
+    })
+  }
+
+  useEffect(() => {
+    const getItem = localStorage.getItem('list')
+    if(getItem){
+      setNotes(JSON.parse(localStorage.getItem('list')))
+    }
+  }, [])
+
+  useEffect(() => {
+    localStorage.setItem('list', JSON.stringify(notes))
+  }, [notes])
+
   return (
     <div className="App">
-      <Notelist notes={notes}  />
+      <SearchNote setSearchTerm={setSearchTerm} searchTerm={searchTerm} />
+      <Notelist notes={notes.filter((item)=>{
+        return item.text.includes(searchTerm)
+      })} deleteFunc={deleteFunc} />
+      <AddNewNote newNoteValue={newNoteValue} />
     </div>
   );
 }
